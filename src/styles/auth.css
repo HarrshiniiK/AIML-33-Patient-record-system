@@ -1,0 +1,51 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+  padding: var(--space-5);
+}
+.auth-ambient {
+  position: absolute; inset: 0; display: flex; align-items: center;
+  pointer-events: none;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-6);
+}
+.auth-brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-lg);
+  color: var(--ink); text-decoration: none; margin-bottom: var(--space-5);
+}
+.auth-brand .brand-mark {
+  width: 28px; height: 28px; border-radius: 7px; background: var(--teal); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+
+.auth-divider {
+  display: flex; align-items: center; gap: 10px; margin: var(--space-5) 0 var(--space-3);
+  color: var(--slate); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em;
+}
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.demo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.demo-chip {
+  padding: 8px 6px; border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--bg); font-size: var(--text-xs); font-weight: 600; color: var(--ink-soft);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.demo-chip:hover { border-color: var(--teal); color: var(--teal); }
+
+.auth-footnote { text-align: center; margin-top: var(--space-5); margin-bottom: 0; }
+
+@media (max-width: 480px) {
+  .demo-grid { grid-template-columns: repeat(2, 1fr); }
+}

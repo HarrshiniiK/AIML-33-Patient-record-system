@@ -1,0 +1,44 @@
+.vitals-line {
+  width: 100%;
+  overflow: hidden;
+}
+
+.vitals-trace {
+  fill: none;
+  stroke: var(--vitals-color, var(--teal));
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Loader: trace draws in on a loop */
+.vitals-loader .vitals-trace {
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  animation: vitals-draw 1.6s ease-in-out infinite;
+}
+
+@keyframes vitals-draw {
+  0% { stroke-dashoffset: 420; opacity: 0.3; }
+  50% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: -420; opacity: 0.3; }
+}
+
+/* Divider: static, subtle, repeats via background-less single sweep */
+.vitals-divider .vitals-trace {
+  opacity: 0.55;
+}
+
+/* Ambient: slow pulse used behind login/landing panels */
+.vitals-ambient {
+  opacity: 0.18;
+}
+.vitals-ambient .vitals-trace {
+  stroke-width: 1.5;
+  animation: vitals-pulse 3.2s ease-in-out infinite;
+}
+
+@keyframes vitals-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
