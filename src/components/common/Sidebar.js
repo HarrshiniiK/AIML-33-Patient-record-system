@@ -29,7 +29,11 @@ const NAV_BY_ROLE = {
   ],
   PATIENT: [
     { to: "/home", label: "My Dashboard", icon: "grid" },
+    { to: "/patient-portal", label: "Patient Portal", icon: "shield" },
     { to: "/my-appointments", label: "My Appointments", icon: "calendar" },
+    { to: "/prescriptions", label: "Prescriptions", icon: "file" },
+    { to: "/billing", label: "Billing", icon: "chart" },
+    { to: "/notifications", label: "Notifications", icon: "shield" },
     { to: "/my-records", label: "My Records", icon: "file" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],

@@ -57,6 +57,57 @@
 .records-list { display: flex; flex-direction: column; gap: var(--space-3); }
 .record-card { }
 
+/* ---------- Patient portal ---------- */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.portal-section { display: flex; flex-direction: column; gap: var(--space-3); }
+.portal-section-wide { grid-column: 1 / -1; }
+.portal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.portal-list li {
+  padding: 10px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.portal-list-title {
+  font-weight: 700;
+  color: var(--navy);
+}
+.billing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.portal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.notification-item {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-soft);
+}
+.notification-teal { background: var(--teal-soft); }
+.notification-amber { background: rgba(244, 180, 33, 0.15); }
+
 /* ---------- Chip filters ---------- */
 .chip-filter {
   padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line);
@@ -110,4 +161,6 @@
 @media (max-width: 900px) {
   .details-grid { grid-template-columns: 1fr; }
   .reports-grid { grid-template-columns: 1fr; }
+  .portal-grid { grid-template-columns: 1fr; }
+  .portal-section-wide { grid-column: auto; }
 }

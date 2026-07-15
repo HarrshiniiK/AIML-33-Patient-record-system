@@ -9,6 +9,16 @@ import {
 import { getPatients } from "../../services/patientService";
 import { getDoctors } from "../../services/doctorService";
 
+function formatTimeLabel(value) {
+  if (!value) return "";
+  const [hours, minutes] = value.split(":").map(Number);
+  const safeHours = Number.isFinite(hours) ? hours : 0;
+  const safeMinutes = Number.isFinite(minutes) ? minutes : 0;
+  const date = new Date();
+  date.setHours(safeHours, safeMinutes, 0, 0);
+  return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
 const emptyForm = { patientId: "", doctorId: "", date: "", time: "", reason: "", status: "Pending" };
 
 function monthMatrix(year, month) {
@@ -31,6 +41,7 @@ function AppointmentCalendar() {
   const [saving, setSaving] = useState(false);
   const [view, setView] = useState("list");
   const [cursor, setCursor] = useState(new Date());
+  const [filter, setFilter] = useState("All");
 
   function load() {
     getAppointments().then(setAppointments);
@@ -85,11 +96,18 @@ function AppointmentCalendar() {
   const apptsByDate = useMemo(() => {
     const map = {};
     (appointments || []).forEach((a) => {
+      if (filter !== "All" && a.status !== filter) return;
       map[a.date] = map[a.date] || [];
       map[a.date].push(a);
     });
     return map;
-  }, [appointments]);
+  }, [appointments, filter]);
+
+  const filteredAppointments = useMemo(() => {
+    if (!appointments) return [];
+    if (filter === "All") return appointments;
+    return appointments.filter((a) => a.status === filter);
+  }, [appointments, filter]);
 
   return (
     <AppLayout>
@@ -98,6 +116,12 @@ function AppointmentCalendar() {
         subtitle={`${appointments?.length ?? "…"} scheduled`}
         actions={
           <div className="flex-gap">
+            <select className="inline-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
+              <option>All</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+              <option>Cancelled</option>
+            </select>
             <div className="view-toggle">
               <button className={view === "list" ? "active" : ""} onClick={() => setView("list")}>List</button>
               <button className={view === "calendar" ? "active" : ""} onClick={() => setView("calendar")}>Calendar</button>
@@ -110,14 +134,14 @@ function AppointmentCalendar() {
       {!appointments ? (
         <Loader label="Loading appointments" />
       ) : view === "list" ? (
-        appointments.length === 0 ? (
+        filteredAppointments.length === 0 ? (
           <EmptyState title="No appointments" message="Schedule the first appointment to get started." />
         ) : (
           <div className="card table-wrap">
             <table className="data-table">
               <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th></th></tr></thead>
               <tbody>
-                {appointments
+                {filteredAppointments
                   .slice()
                   .sort((a, b) => new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time))
                   .map((a) => (
@@ -125,7 +149,7 @@ function AppointmentCalendar() {
                       <td>{a.patientName}</td>
                       <td>{a.doctorName}</td>
                       <td className="mono">{a.date}</td>
-                      <td className="mono">{a.time}</td>
+                      <td className="mono">{formatTimeLabel(a.time)}</td>
                       <td>{a.reason}</td>
                       <td><span className={`badge ${a.status === "Confirmed" ? "badge-teal" : a.status === "Cancelled" ? "badge-coral" : "badge-amber"}`}>{a.status}</span></td>
                       <td>
@@ -163,7 +187,7 @@ function AppointmentCalendar() {
                   {day && <span className="calendar-day-num">{day}</span>}
                   {dayAppts.slice(0, 2).map((a) => (
                     <div key={a.id} className="calendar-chip" onClick={(e) => { e.stopPropagation(); openEdit(a); }}>
-                      {a.time} {a.patientName.split(" ")[0]}
+                      {formatTimeLabel(a.time)} {a.patientName.split(" ")[0]}
                     </div>
                   ))}
                   {dayAppts.length > 2 && <div className="calendar-more muted">+{dayAppts.length - 2} more</div>}
@@ -198,6 +222,7 @@ function AppointmentCalendar() {
             <div className="field">
               <label>Time</label>
               <input type="time" name="time" value={form.time} onChange={handleChange} required />
+              {form.time && <div className="field-hint">Selected time: {formatTimeLabel(form.time)}</div>}
             </div>
           </div>
           <div className="field">
