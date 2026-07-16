@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import AppLayout from "../../components/common/AppLayout";
 import Topbar from "../../components/common/Topbar";
 import Loader from "../../components/common/Loader";
-import { EmptyState } from "../../components/common/Modal";
+
 import { createAppointment, deleteAppointment, getAppointmentsForPatient, updateAppointment } from "../../services/appointmentService";
 import { getDoctors } from "../../services/doctorService";
 import { useAuth } from "../../context/AuthContext";
@@ -41,7 +41,7 @@ function MyAppointments() {
   const [rescheduling, setRescheduling] = useState(false);
   const [rescheduleMessage, setRescheduleMessage] = useState("");
 
-  function loadData() {
+  const loadData = useCallback(() => {
     if (!user?.patientId) {
       setAppointments([]);
       setDoctors([]);
@@ -52,11 +52,11 @@ function MyAppointments() {
       setAppointments(patientAppointments || []);
       setDoctors(doctorList || []);
     });
-  }
+  }, [user?.patientId]);
 
   useEffect(() => {
     loadData();
-  }, [user?.patientId]);
+  }, [loadData]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });

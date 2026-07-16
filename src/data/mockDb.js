@@ -99,6 +99,7 @@ const seedPrescriptions = [
 ];
 
 const seedRefillRequests = [];
+const seedNotifications = [];
 
 const KEYS = {
   users: "vitalis_users",
@@ -108,6 +109,7 @@ const KEYS = {
   records: "vitalis_records",
   prescriptions: "vitalis_prescriptions",
   refillRequests: "vitalis_refill_requests",
+  notifications: "vitalis_notifications",
 };
 
 function mergeSeedData(existingItems, seedItems) {
@@ -145,6 +147,7 @@ function seedIfEmpty() {
   const records = JSON.parse(localStorage.getItem(KEYS.records) || "null");
   const prescriptions = JSON.parse(localStorage.getItem(KEYS.prescriptions) || "null");
   const refillRequests = JSON.parse(localStorage.getItem(KEYS.refillRequests) || "null");
+  const notifications = JSON.parse(localStorage.getItem(KEYS.notifications) || "null");
 
   if (!users) localStorage.setItem(KEYS.users, JSON.stringify(seedUsers));
   else localStorage.setItem(KEYS.users, JSON.stringify(mergeSeedData(users, seedUsers)));
@@ -166,6 +169,9 @@ function seedIfEmpty() {
 
   if (!refillRequests) localStorage.setItem(KEYS.refillRequests, JSON.stringify(seedRefillRequests));
   else localStorage.setItem(KEYS.refillRequests, JSON.stringify(mergeSeedData(refillRequests, seedRefillRequests)));
+
+  if (!notifications) localStorage.setItem(KEYS.notifications, JSON.stringify(seedNotifications));
+  else localStorage.setItem(KEYS.notifications, JSON.stringify(mergeSeedData(notifications, seedNotifications)));
 }
 seedIfEmpty();
 

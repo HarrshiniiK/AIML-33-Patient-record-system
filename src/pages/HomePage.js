@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 const patientQuickLinks = [
   { to: "/my-appointments", label: "Book Appointment" },
-  { to: "/my-records", label: "View Prescriptions" },
+  { to: "/prescriptions", label: "View Prescriptions" },
   { to: "/billing", label: "Billing" },
   { to: "/my-records", label: "Lab Reports" },
 ];

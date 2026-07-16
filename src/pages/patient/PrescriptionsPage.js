@@ -3,6 +3,7 @@ import AppLayout from "../../components/common/AppLayout";
 import Topbar from "../../components/common/Topbar";
 import { useAuth } from "../../context/AuthContext";
 import { createRefillRequest, getPrescriptions, getRefillRequests, updateRefillRequest } from "../../services/prescriptionService";
+import { createNotification } from "../../services/notificationService";
 
 function PrescriptionsPage() {
   const { user } = useAuth();
@@ -40,19 +41,64 @@ function PrescriptionsPage() {
       decisionNotes: "",
     });
 
+    await createNotification({
+      targetRoles: ["DOCTOR", "STAFF"],
+      title: "New refill request",
+      message: `${user.name} requested a refill for ${selectedMedication.name}.`,
+      path: "/prescriptions",
+      tone: "amber"
+    });
+
+    await createNotification({
+      targetUserId: user.patientId,
+      title: "Refill requested",
+      message: `Your refill request for ${selectedMedication.name} has been sent to the care team.`,
+      path: "/prescriptions",
+      tone: "teal"
+    });
+
     setNotes("");
     setSelectedMedication(null);
     setSubmitted(true);
+    window.alert("Refill request sent successfully! The care team has been notified.");
     setTimeout(() => setSubmitted(false), 1800);
   }
 
   async function handleReviewDecision(id) {
+    const request = requests.find((r) => r.id === id);
+    const finalNotes = reviewNotes || `${decision} by ${user?.name}`;
+
     await updateRefillRequest(id, {
       status: decision,
-      decisionNotes: reviewNotes || `${decision} by ${user?.name}`,
+      decisionNotes: finalNotes,
       reviewedBy: user?.name,
       reviewedAt: new Date().toISOString(),
     });
+
+    let notificationTitle = "Refill update";
+    let notificationTone = "teal";
+    let notificationMessage = `Your refill request for ${request?.medication} was updated.`;
+
+    if (decision === "Approved") {
+      notificationTitle = "Refill approved";
+      notificationTone = "teal";
+      notificationMessage = `Doctor ${user?.name} approved your refill for ${request?.medication}.`;
+    } else if (decision === "Book appointment") {
+      notificationTitle = "Appointment required";
+      notificationTone = "amber";
+      notificationMessage = `Doctor ${user?.name} wants you to make an appointment before refilling ${request?.medication}.`;
+    }
+
+    if (request?.patientId) {
+      await createNotification({
+        targetUserId: request.patientId,
+        title: notificationTitle,
+        message: notificationMessage,
+        path: decision === "Book appointment" ? "/my-appointments" : "/prescriptions",
+        tone: notificationTone
+      });
+    }
+
     setReviewingId(null);
     setDecision("Approved");
     setReviewNotes("");
