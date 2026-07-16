@@ -7,22 +7,21 @@ import { useAuth } from "../../context/AuthContext";
 import { getPatient, updatePatient } from "../../services/patientService";
 import { getAppointmentsForPatient } from "../../services/appointmentService";
 import { getRecordsForPatient } from "../../services/recordService";
+import { getNotifications } from "../../services/notificationService";
 
 const billingItems = [
   { id: "INV-1042", amount: "$84.00", status: "Paid", date: "2026-07-05" },
   { id: "INV-1043", amount: "$120.00", status: "Pending", date: "2026-07-20" },
 ];
 
-const notificationItems = [
-  { id: 1, title: "Appointment reminder", detail: "Your follow-up visit is booked for 10:00 AM tomorrow.", tone: "teal" },
-  { id: 2, title: "Medication refill", detail: "Amlodipine refill is ready for pickup at the pharmacy.", tone: "amber" },
-];
+
 
 function PatientPortalPage() {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState(null);
   const [records, setRecords] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ name: "", dob: "", phone: "", address: "", bloodGroup: "", emergencyContact: "", assignedDoctor: "" });
   const [profileSaved, setProfileSaved] = useState(false);
@@ -39,7 +38,8 @@ function PatientPortalPage() {
       getPatient(user.patientId),
       getAppointmentsForPatient(user.patientId),
       getRecordsForPatient(user.patientId),
-    ]).then(([patient, allAppointments, allRecords]) => {
+      getNotifications(user.patientId, user.role)
+    ]).then(([patient, allAppointments, allRecords, userNotifications]) => {
       setProfile(patient);
       setProfileForm({
         name: patient ? `${patient.firstName || ""} ${patient.lastName || ""}`.trim() : "",
@@ -52,8 +52,9 @@ function PatientPortalPage() {
       });
       setAppointments(allAppointments || []);
       setRecords(allRecords || []);
+      setNotifications(userNotifications || []);
     });
-  }, [user?.patientId]);
+  }, [user]);
 
   if (user?.patientId && !profile && appointments === null) {
     return (
@@ -260,15 +261,19 @@ function PatientPortalPage() {
         <section className="card card-pad portal-section portal-section-wide">
           <div className="section-header">
             <h3 className="mb-0">Notifications</h3>
-            <span className="badge badge-slate">2 reminders</span>
+            <span className="badge badge-slate">{notifications.filter(n => !n.read).length} unread</span>
           </div>
           <div className="notification-list">
-            {notificationItems.map((item) => (
-              <div key={item.id} className={`notification-item notification-${item.tone}`}>
-                <strong>{item.title}</strong>
-                <div className="muted text-sm">{item.detail}</div>
-              </div>
-            ))}
+            {notifications.length === 0 ? (
+              <p className="muted mb-0">No new notifications.</p>
+            ) : (
+              notifications.map((item) => (
+                <div key={item.id} className={`notification-item notification-${item.tone || "slate"}`}>
+                  <strong>{item.title}</strong>
+                  <div className="muted text-sm">{item.message}</div>
+                </div>
+              ))
+            )}
           </div>
         </section>
       </div>

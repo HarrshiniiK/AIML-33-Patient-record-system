@@ -17,6 +17,7 @@ const NAV_BY_ROLE = {
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
     { to: "/records", label: "Medical Records", icon: "file" },
+    { to: "/prescriptions", label: "Prescriptions", icon: "file" },
     { to: "/reports", label: "Reports", icon: "chart" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
@@ -25,6 +26,7 @@ const NAV_BY_ROLE = {
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
     { to: "/records", label: "Medical Records", icon: "file" },
+    { to: "/prescriptions", label: "Prescriptions", icon: "file" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
   PATIENT: [

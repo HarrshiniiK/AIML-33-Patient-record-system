@@ -1,25 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../../components/common/AppLayout";
 import Topbar from "../../components/common/Topbar";
-
-const alerts = [
-  { id: 1, title: "Appointment reminder", detail: "Your follow-up consultation is tomorrow at 10:00 AM.", tone: "teal" },
-  { id: 2, title: "Lab report ready", detail: "Your lipid panel report is now available for download.", tone: "amber" },
-  { id: 3, title: "Payment due", detail: "Invoice INV-1043 is due by July 20.", tone: "coral" },
-];
+import { useAuth } from "../../context/AuthContext";
+import { getNotifications } from "../../services/notificationService";
 
 function NotificationsPage() {
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+    getNotifications(user.patientId, user.role).then(setNotifications);
+  }, [user]);
+
   return (
     <AppLayout>
       <Topbar title="Notifications" subtitle="Stay up to date with reminders and important updates." />
 
       <div className="notification-list">
-        {alerts.map((alert) => (
-          <div key={alert.id} className={`notification-item notification-${alert.tone}`}>
-            <strong>{alert.title}</strong>
-            <div className="muted text-sm">{alert.detail}</div>
-          </div>
-        ))}
+        {notifications.length === 0 ? (
+          <p className="muted" style={{ padding: "var(--space-3)" }}>No notifications available.</p>
+        ) : (
+          notifications.map((alert) => (
+            <div key={alert.id} className={`notification-item notification-${alert.tone || "slate"}`}>
+              <strong>{alert.title}</strong>
+              <div className="muted text-sm">{alert.message}</div>
+            </div>
+          ))
+        )}
       </div>
     </AppLayout>
   );
