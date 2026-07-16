@@ -16,8 +16,8 @@ const NAV_BY_ROLE = {
     { to: "/home", label: "Dashboard", icon: "grid" },
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
+    { to: "/records", label: "Medical Records", icon: "file" },
     { to: "/prescriptions", label: "Prescriptions", icon: "file" },
-    { to: "/lab-reports", label: "Lab Reports", icon: "shield" },
     { to: "/reports", label: "Analytics & Reports", icon: "chart" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
@@ -26,6 +26,7 @@ const NAV_BY_ROLE = {
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
     { to: "/records", label: "Medical Records", icon: "file" },
+    { to: "/prescriptions", label: "Prescriptions", icon: "file" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
   PATIENT: [
@@ -69,6 +70,14 @@ function Sidebar() {
     navigate("/login", { replace: true });
   }
 
+  function handleProfileClick() {
+    if (user?.role === "PATIENT" || user?.role === "patient") {
+      navigate("/patient-portal");
+    } else {
+      navigate("/settings");
+    }
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -90,7 +99,11 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="sidebar-user">
+        <div className="sidebar-user" onClick={handleProfileClick} role="button" tabIndex={0} onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            handleProfileClick();
+          }
+        }}>
           <div className="avatar">{user?.name?.charAt(0) || "?"}</div>
           <div>
             <div className="sidebar-user-name">{user?.name}</div>

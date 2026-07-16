@@ -65,7 +65,7 @@ function AppRoutes() {
       <Route path="/patient-portal" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PatientPortalPage /></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyAppointments /></ProtectedRoute>} />
       <Route path="/my-records" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyRecords /></ProtectedRoute>} />
-      <Route path="/prescriptions" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PrescriptionsPage /></ProtectedRoute>} />
+      <Route path="/prescriptions" element={<ProtectedRoute allowedRoles={["PATIENT", "DOCTOR", "STAFF"]}><PrescriptionsPage /></ProtectedRoute>} />
       <Route path="/billing" element={<ProtectedRoute allowedRoles={["PATIENT"]}><BillingPage /></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute allowedRoles={["PATIENT"]}><NotificationsPage /></ProtectedRoute>} />
 
