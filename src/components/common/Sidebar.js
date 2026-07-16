@@ -16,8 +16,9 @@ const NAV_BY_ROLE = {
     { to: "/home", label: "Dashboard", icon: "grid" },
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
-    { to: "/records", label: "Medical Records", icon: "file" },
-    { to: "/reports", label: "Reports", icon: "chart" },
+    { to: "/prescriptions", label: "Prescriptions", icon: "file" },
+    { to: "/lab-reports", label: "Lab Reports", icon: "shield" },
+    { to: "/reports", label: "Analytics & Reports", icon: "chart" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
   STAFF: [
