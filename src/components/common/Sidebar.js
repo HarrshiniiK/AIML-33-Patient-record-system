@@ -29,7 +29,6 @@ const NAV_BY_ROLE = {
   ],
   PATIENT: [
     { to: "/home", label: "My Dashboard", icon: "grid" },
-    { to: "/patient-portal", label: "Patient Portal", icon: "shield" },
     { to: "/my-appointments", label: "My Appointments", icon: "calendar" },
     { to: "/prescriptions", label: "Prescriptions", icon: "file" },
     { to: "/billing", label: "Billing", icon: "chart" },
@@ -68,6 +67,14 @@ function Sidebar() {
     navigate("/login", { replace: true });
   }
 
+  function handleProfileClick() {
+    if (user?.role === "PATIENT" || user?.role === "patient") {
+      navigate("/my-profile");
+    } else {
+      navigate("/settings");
+    }
+  }
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -89,7 +96,7 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="sidebar-user">
+        <div className="sidebar-user" onClick={handleProfileClick} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleProfileClick(); }}>
           <div className="avatar">{user?.name?.charAt(0) || "?"}</div>
           <div>
             <div className="sidebar-user-name">{user?.name}</div>

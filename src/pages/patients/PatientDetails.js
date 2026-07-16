@@ -14,8 +14,8 @@ function PatientDetails() {
   const [appointments, setAppointments] = useState([]);
   const [records, setRecords] = useState([]);
   const { user } = useAuth();
-  const canEditDemographics = ["ADMIN", "STAFF"].includes(user.role);
-  const canAddRecord = ["ADMIN", "DOCTOR"].includes(user.role);
+  const canEditDemographics = ["ADMIN", "STAFF"].includes(user?.role) || user?.patientId === id;
+  const canAddRecord = ["ADMIN", "DOCTOR"].includes(user?.role);
 
   useEffect(() => {
     getPatient(id).then(setPatient);
