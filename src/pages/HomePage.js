@@ -8,12 +8,13 @@ import { getPatients } from "../services/patientService";
 import { getDoctors } from "../services/doctorService";
 import { getAppointments, getAppointmentsForPatient } from "../services/appointmentService";
 import { getRecordsForPatient } from "../services/recordService";
+import { getRefillRequests } from "../services/prescriptionService";
 import { Link } from "react-router-dom";
 import DoctorPortalPage from "./doctor/DoctorPortalPage";
 
 const patientQuickLinks = [
   { to: "/my-appointments", label: "Book Appointment" },
-  { to: "/my-records", label: "View Prescriptions" },
+  { to: "/prescriptions", label: "View Prescriptions" },
   { to: "/billing", label: "Billing" },
   { to: "/my-records", label: "Lab Reports" },
 ];
@@ -27,13 +28,15 @@ function greeting() {
 
 function StaffDashboard({ user }) {
   const [data, setData] = useState(null);
+  const [refillRequests, setRefillRequests] = useState([]);
   const isDoctor = user.role === "DOCTOR";
 
   useEffect(() => {
-    Promise.all([getPatients(), getDoctors(), getAppointments()]).then(([allPatients, doctors, allAppointments]) => {
+    Promise.all([getPatients(), getDoctors(), getAppointments(), getRefillRequests()]).then(([allPatients, doctors, allAppointments, requests]) => {
       const patients = isDoctor ? allPatients.filter((p) => p.assignedDoctor === user.name) : allPatients;
       const appointments = isDoctor ? allAppointments.filter((a) => a.doctorName === user.name) : allAppointments;
       setData({ patients, doctors, appointments });
+      setRefillRequests(requests.filter((request) => request.status === "Pending"));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -57,6 +60,25 @@ function StaffDashboard({ user }) {
         <StatCard label="Currently admitted" value={admitted} accent="teal" />
         <StatCard label="Appointments today" value={todaysAppointments.length} accent="amber" />
         <StatCard label="Pending confirmations" value={pending} accent="coral" />
+      </div>
+
+      <div className="card card-pad" style={{ marginBottom: "var(--space-4)" }}>
+        <div className="section-header">
+          <h3 className="mb-0">Refill requests</h3>
+          <Link to="/prescriptions" className="text-sm">Review →</Link>
+        </div>
+        {refillRequests.length === 0 ? (
+          <p className="muted mb-0">No pending refill requests right now.</p>
+        ) : (
+          <div className="notification-list">
+            {refillRequests.map((request) => (
+              <div key={request.id} className="notification-item notification-amber">
+                <strong>{request.medication}</strong>
+                <div className="muted text-sm">{request.patientName} · {request.dosage} · {request.requestNotes || "No additional notes"}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card card-pad">

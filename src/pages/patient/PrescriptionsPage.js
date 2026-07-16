@@ -1,44 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AppLayout from "../../components/common/AppLayout";
 import Topbar from "../../components/common/Topbar";
 import { useAuth } from "../../context/AuthContext";
-
-const initialPrescriptions = [
-  {
-    id: 1,
-    name: "Amlodipine",
-    dosage: "5 mg",
-    duration: "Daily for 30 days",
-    notes: "Take with food and monitor blood pressure.",
-    patient: "Daniel Osei",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Metformin XR",
-    dosage: "500 mg",
-    duration: "Every evening for 14 days",
-    notes: "Continue until follow-up review.",
-    patient: "Jane Smith",
-    status: "Pending review",
-  },
-];
-
-const initialRequests = [
-  {
-    id: 101,
-    patientName: "Daniel Osei",
-    medication: "Amlodipine",
-    dosage: "5 mg",
-    requestNotes: "I have one week left and would like a refill.",
-    status: "Pending",
-  },
-];
+import { createRefillRequest, getPrescriptions, getRefillRequests, updateRefillRequest } from "../../services/prescriptionService";
+import { createNotification } from "../../services/notificationService";
 
 function PrescriptionsPage() {
   const { user } = useAuth();
-  const [prescriptions] = useState(initialPrescriptions);
-  const [requests, setRequests] = useState(initialRequests);
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [notes, setNotes] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -46,42 +16,89 @@ function PrescriptionsPage() {
   const [decision, setDecision] = useState("Approved");
   const [reviewNotes, setReviewNotes] = useState("");
 
-  const canReview = user?.role === "DOCTOR" || user?.role === "STAFF" || user?.role === "ADMIN";
-  const pendingRequests = useMemo(() => requests.filter((request) => request.status === "Pending"), [requests]);
+  useEffect(() => {
+    if (!user?.patientId) return;
+    Promise.all([getPrescriptions(user.patientId), getRefillRequests()]).then(([items, refillRequests]) => {
+      setPrescriptions(items);
+      setRequests(refillRequests.filter((request) => request.patientId === user.patientId));
+    });
+  }, [user?.patientId, submitted]);
 
-  function handleRequestSubmit(event) {
-    event.preventDefault();
-    if (!selectedMedication) return;
+  const canReview = user?.role === "DOCTOR" || user?.role === "STAFF";
 
-    const newRequest = {
-      id: Date.now(),
-      patientName: user?.name || "Patient",
+  async function handleRequestSubmit(e) {
+    e.preventDefault();
+    if (!user?.patientId || !selectedMedication) return;
+
+    await createRefillRequest({
+      patientId: user.patientId,
+      patientName: user.name,
       medication: selectedMedication.name,
       dosage: selectedMedication.dosage,
-      requestNotes: notes || "No additional notes provided.",
+      requestNotes: notes,
       status: "Pending",
-    };
+      createdAt: new Date().toISOString(),
+      decisionNotes: "",
+    });
 
-    setRequests((current) => [newRequest, ...current]);
+    await createNotification({
+      targetRoles: ["DOCTOR", "STAFF"],
+      title: "New refill request",
+      message: `${user.name} requested a refill for ${selectedMedication.name}.`,
+      path: "/prescriptions",
+      tone: "amber"
+    });
+
+    await createNotification({
+      targetUserId: user.patientId,
+      title: "Refill requested",
+      message: `Your refill request for ${selectedMedication.name} has been sent to the care team.`,
+      path: "/prescriptions",
+      tone: "teal"
+    });
+
     setNotes("");
     setSelectedMedication(null);
     setSubmitted(true);
-    window.alert("Refill request sent successfully.");
+    window.alert("Refill request sent successfully! The care team has been notified.");
     setTimeout(() => setSubmitted(false), 1800);
   }
 
-  function handleReviewDecision(id) {
-    setRequests((current) =>
-      current.map((request) =>
-        request.id === id
-          ? {
-              ...request,
-              status: decision,
-              decisionNotes: reviewNotes || `${decision} by ${user?.name}`,
-            }
-          : request
-      )
-    );
+  async function handleReviewDecision(id) {
+    const request = requests.find((r) => r.id === id);
+    const finalNotes = reviewNotes || `${decision} by ${user?.name}`;
+
+    await updateRefillRequest(id, {
+      status: decision,
+      decisionNotes: finalNotes,
+      reviewedBy: user?.name,
+      reviewedAt: new Date().toISOString(),
+    });
+
+    let notificationTitle = "Refill update";
+    let notificationTone = "teal";
+    let notificationMessage = `Your refill request for ${request?.medication} was updated.`;
+
+    if (decision === "Approved") {
+      notificationTitle = "Refill approved";
+      notificationTone = "teal";
+      notificationMessage = `Doctor ${user?.name} approved your refill for ${request?.medication}.`;
+    } else if (decision === "Book appointment") {
+      notificationTitle = "Appointment required";
+      notificationTone = "amber";
+      notificationMessage = `Doctor ${user?.name} wants you to make an appointment before refilling ${request?.medication}.`;
+    }
+
+    if (request?.patientId) {
+      await createNotification({
+        targetUserId: request.patientId,
+        title: notificationTitle,
+        message: notificationMessage,
+        path: decision === "Book appointment" ? "/my-appointments" : "/prescriptions",
+        tone: notificationTone
+      });
+    }
+
     setReviewingId(null);
     setDecision("Approved");
     setReviewNotes("");
@@ -89,42 +106,21 @@ function PrescriptionsPage() {
     setTimeout(() => setSubmitted(false), 1800);
   }
 
+  const pendingRequests = useMemo(() => requests.filter((request) => request.status === "Pending"), [requests]);
+
   return (
     <AppLayout>
-      <Topbar title="Prescriptions" subtitle="Create prescriptions, review refill requests, and track medication plans." />
-
-      {canReview && (
-        <div className="card card-pad" style={{ marginBottom: "var(--space-4)" }}>
-          <div className="section-header">
-            <h3 className="mb-0">Create new prescription</h3>
-            <button className="btn btn-outline btn-sm">Add prescription</button>
-          </div>
-          <div className="doctor-portal-search-row">
-            <select className="search-input" defaultValue="">
-              <option value="" disabled>Select patient</option>
-              <option value="daniel">Daniel Osei</option>
-              <option value="jane">Jane Smith</option>
-              <option value="amara">Amara Diallo</option>
-            </select>
-            <input className="search-input" placeholder="Medication" defaultValue="" />
-            <input className="search-input" placeholder="Dosage" defaultValue="" />
-            <input className="search-input" placeholder="Duration" defaultValue="" />
-          </div>
-        </div>
-      )}
+      <Topbar title="Prescriptions" subtitle="Current medication plans, refill requests, and care-team review." />
 
       <div className="records-list">
         {prescriptions.map((item) => (
           <div key={item.id} className="card card-pad">
             <div className="section-header">
-              <div>
-                <h3 className="mb-0">{item.name}</h3>
-                <div className="muted text-sm">{item.patient}</div>
-              </div>
+              <h3 className="mb-0">{item.name}</h3>
               <button
                 className="btn btn-outline btn-sm"
                 onClick={() => setSelectedMedication(item)}
-                disabled={!user?.patientId && user?.role !== "PATIENT"}
+                disabled={!user?.patientId}
               >
                 Request refill
               </button>
@@ -154,7 +150,7 @@ function PrescriptionsPage() {
           <form onSubmit={handleRequestSubmit} style={{ marginTop: "var(--space-3)" }}>
             <div className="field">
               <label>Describe your request</label>
-              <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={4} placeholder="Mention how long you have left, symptoms, and any concerns." />
+              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Mention how long you have left, symptoms, and any concerns." />
             </div>
             <button type="submit" className="btn btn-primary btn-sm">Send refill request</button>
             {submitted && <span className="badge badge-teal" style={{ marginLeft: 8 }}>Request sent</span>}
@@ -177,7 +173,7 @@ function PrescriptionsPage() {
                   <div className="section-header">
                     <div>
                       <strong>{request.medication}</strong>
-                      <div className="muted text-sm">{request.patientName} • {request.dosage}</div>
+                      <div className="muted text-sm">{request.patientName} · {request.dosage}</div>
                     </div>
                     <span className={`badge ${request.status === "Pending" ? "badge-amber" : request.status === "Approved" ? "badge-teal" : "badge-slate"}`}>
                       {request.status}
@@ -188,10 +184,7 @@ function PrescriptionsPage() {
                   {request.status === "Pending" && reviewingId !== request.id ? (
                     <div className="flex-gap" style={{ marginTop: "var(--space-3)" }}>
                       <button className="btn btn-outline btn-sm" onClick={() => setReviewingId(request.id)}>Review request</button>
-                      <button className="btn btn-outline btn-sm" onClick={() => {
-                        setReviewingId(request.id);
-                        setDecision("Book appointment");
-                      }}>Request appointment</button>
+                      <button className="btn btn-outline btn-sm" onClick={() => { setReviewingId(request.id); setDecision("Book appointment"); }}>Request appointment</button>
                     </div>
                   ) : null}
 
@@ -199,7 +192,7 @@ function PrescriptionsPage() {
                     <div style={{ marginTop: "var(--space-3)" }}>
                       <div className="field">
                         <label>Decision</label>
-                        <select value={decision} onChange={(event) => setDecision(event.target.value)}>
+                        <select value={decision} onChange={(e) => setDecision(e.target.value)}>
                           <option value="Approved">Approve refill</option>
                           <option value="Needs review">Needs review</option>
                           <option value="Book appointment">Book appointment</option>
@@ -207,7 +200,7 @@ function PrescriptionsPage() {
                       </div>
                       <div className="field">
                         <label>Care-team notes</label>
-                        <textarea value={reviewNotes} onChange={(event) => setReviewNotes(event.target.value)} rows={3} placeholder="Add instructions, follow-up plan, or appointment recommendation." />
+                        <textarea value={reviewNotes} onChange={(e) => setReviewNotes(e.target.value)} rows={3} placeholder="Add instructions, follow-up plan, or appointment recommendation." />
                       </div>
                       <div className="flex-gap">
                         <button className="btn btn-primary btn-sm" onClick={() => handleReviewDecision(request.id)}>Save decision</button>

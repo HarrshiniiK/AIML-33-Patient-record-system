@@ -5,6 +5,7 @@ export const seedUsers = [
   { id: "u2", name: "Dr. Marcus Chen", email: "doctor@vitalis.dev", password: "doctor123", role: "DOCTOR", specialization: "Cardiology" },
   { id: "u3", name: "Priya Nair", email: "staff@vitalis.dev", password: "staff123", role: "STAFF" },
   { id: "u4", name: "Daniel Osei", email: "patient@vitalis.dev", password: "patient123", role: "PATIENT", patientId: "p1" },
+  { id: "u5", name: "Harsh Patel", email: "harsh@gmail.com", password: "123456", role: "PATIENT", patientId: "p1" },
 ];
 
 export const seedPatients = [
@@ -23,14 +24,36 @@ export const seedDoctors = [
 
 export const seedAppointments = [
   { id: "a1", patientId: "p1", patientName: "Daniel Osei", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-10", time: "10:00", reason: "Follow-up consultation", status: "Confirmed" },
-  { id: "a2", patientId: "p2", patientName: "Jane Smith", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-11", time: "14:30", reason: "Blood sugar review", status: "Pending" },
-  { id: "a3", patientId: "p4", patientName: "Amara Diallo", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2026-07-09", time: "11:00", reason: "Asthma check-up", status: "Confirmed" },
-  { id: "a4", patientId: "p5", patientName: "Noah Becker", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-14", time: "09:30", reason: "Cardiac review", status: "Confirmed" },
+  { id: "a2", patientId: "p1", patientName: "Daniel Osei", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2026-07-12", time: "11:30", reason: "Orthopedic review", status: "Confirmed" },
+  { id: "a3", patientId: "p1", patientName: "Daniel Osei", doctorId: "d3", doctorName: "Dr. Samuel Okafor", date: "2026-07-16", time: "09:00", reason: "Pediatric check-up", status: "Pending" },
+  { id: "a4", patientId: "p1", patientName: "Daniel Osei", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-24", time: "15:00", reason: "Lab review", status: "Pending" },
+  { id: "a5", patientId: "p1", patientName: "Daniel Osei", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2026-08-03", time: "13:30", reason: "Cardiac rehabilitation", status: "Confirmed" },
+  { id: "a6", patientId: "p1", patientName: "Daniel Osei", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2025-06-05", time: "08:30", reason: "Initial consultation", status: "Completed" },
+  { id: "a7", patientId: "p1", patientName: "Daniel Osei", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2025-05-21", time: "16:00", reason: "Hypertension review", status: "Completed" },
+  { id: "a8", patientId: "p1", patientName: "Daniel Osei", doctorId: "d3", doctorName: "Dr. Samuel Okafor", date: "2025-04-09", time: "10:30", reason: "Lifestyle counseling", status: "Completed" },
+  { id: "a9", patientId: "p1", patientName: "Daniel Osei", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2025-03-17", time: "12:00", reason: "Medication adjustment", status: "Completed" },
+  { id: "a10", patientId: "p1", patientName: "Daniel Osei", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2025-02-11", time: "14:30", reason: "Routine screening", status: "Completed" },
+  { id: "a11", patientId: "p2", patientName: "Jane Smith", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-11", time: "14:30", reason: "Blood sugar review", status: "Pending" },
+  { id: "a12", patientId: "p4", patientName: "Amara Diallo", doctorId: "d2", doctorName: "Dr. Elena Vargas", date: "2026-07-09", time: "11:00", reason: "Asthma check-up", status: "Confirmed" },
+  { id: "a13", patientId: "p5", patientName: "Noah Becker", doctorId: "d1", doctorName: "Dr. Marcus Chen", date: "2026-07-14", time: "09:30", reason: "Cardiac review", status: "Confirmed" },
 ];
 
 export const seedRecords = [
   { id: "r1", patientId: "p1", date: "2026-06-01", type: "Prescription", title: "Amlodipine 5mg", notes: "Once daily for blood pressure management. Review in 4 weeks.", doctor: "Dr. Marcus Chen" },
   { id: "r2", patientId: "p1", date: "2026-06-15", type: "Lab Report", title: "Lipid Panel", notes: "LDL slightly elevated. Recommend dietary adjustment.", doctor: "Dr. Marcus Chen" },
-  { id: "r3", patientId: "p2", date: "2026-06-15", type: "Lab Report", title: "HbA1c Test", notes: "7.2% — above target. Adjust metformin dosage.", doctor: "Dr. Marcus Chen" },
-  { id: "r4", patientId: "p3", date: "2026-05-28", type: "Imaging", title: "Tibia X-Ray", notes: "Clean fracture, cast applied. Recheck in 6 weeks.", doctor: "Dr. Elena Vargas" },
+  { id: "r3", patientId: "p1", date: "2026-05-20", type: "Lab Report", title: "CBC", notes: "Normal blood count with no concerning findings.", doctor: "Dr. Marcus Chen" },
+  { id: "r4", patientId: "p1", date: "2026-04-18", type: "Imaging", title: "Chest X-Ray", notes: "Clear lungs with no acute findings.", doctor: "Dr. Marcus Chen" },
+  { id: "r5", patientId: "p1", date: "2026-03-12", type: "Prescription", title: "Metoprolol 50mg", notes: "Dose adjusted after review of blood pressure response.", doctor: "Dr. Marcus Chen" },
+  { id: "r6", patientId: "p1", date: "2026-02-08", type: "Lab Report", title: "Kidney Function Panel", notes: "Creatinine and BUN within expected range.", doctor: "Dr. Marcus Chen" },
+  { id: "r7", patientId: "p1", date: "2026-01-14", type: "Imaging", title: "ECG", notes: "Normal sinus rhythm observed.", doctor: "Dr. Marcus Chen" },
+  { id: "r8", patientId: "p1", date: "2025-12-04", type: "Prescription", title: "Hydrochlorothiazide 12.5mg", notes: "Continued for blood pressure management.", doctor: "Dr. Marcus Chen" },
+  { id: "r9", patientId: "p1", date: "2025-11-17", type: "Lab Report", title: "Thyroid Panel", notes: "Results stable; no change in medication required.", doctor: "Dr. Marcus Chen" },
+  { id: "r10", patientId: "p1", date: "2025-10-02", type: "Prescription", title: "Omeprazole 20mg", notes: "Reassess if symptoms persist beyond 2 weeks.", doctor: "Dr. Marcus Chen" },
+  { id: "r11", patientId: "p1", date: "2025-09-10", type: "Lab Report", title: "Blood Glucose", notes: "Fasting glucose normal; continue diet monitoring.", doctor: "Dr. Elena Vargas" },
+  { id: "r12", patientId: "p1", date: "2025-08-22", type: "Lab Report", title: "Hemoglobin A1C", notes: "Stable trend; no emergency action needed.", doctor: "Dr. Elena Vargas" },
+  { id: "r13", patientId: "p1", date: "2025-07-03", type: "Imaging", title: "MRI Brain", notes: "No abnormal findings reported.", doctor: "Dr. Samuel Okafor" },
+  { id: "r14", patientId: "p1", date: "2025-06-19", type: "Lab Report", title: "Vitamin D", notes: "Deficiency corrected with supplementation.", doctor: "Dr. Samuel Okafor" },
+  { id: "r15", patientId: "p1", date: "2025-05-28", type: "Prescription", title: "Vitamin D3 1000 IU", notes: "Take once daily with meals.", doctor: "Dr. Samuel Okafor" },
+  { id: "r16", patientId: "p2", date: "2026-06-15", type: "Lab Report", title: "HbA1c Test", notes: "7.2% — above target. Adjust metformin dosage.", doctor: "Dr. Marcus Chen" },
+  { id: "r17", patientId: "p3", date: "2025-05-28", type: "Imaging", title: "Tibia X-Ray", notes: "Clean fracture, cast applied. Recheck in 6 weeks.", doctor: "Dr. Elena Vargas" },
 ];

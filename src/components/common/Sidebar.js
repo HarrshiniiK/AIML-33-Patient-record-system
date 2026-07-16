@@ -31,7 +31,6 @@ const NAV_BY_ROLE = {
   ],
   PATIENT: [
     { to: "/home", label: "My Dashboard", icon: "grid" },
-    { to: "/patient-portal", label: "Patient Portal", icon: "shield" },
     { to: "/my-appointments", label: "My Appointments", icon: "calendar" },
     { to: "/prescriptions", label: "Prescriptions", icon: "file" },
     { to: "/billing", label: "Billing", icon: "chart" },
@@ -72,7 +71,7 @@ function Sidebar() {
 
   function handleProfileClick() {
     if (user?.role === "PATIENT" || user?.role === "patient") {
-      navigate("/patient-portal");
+      navigate("/my-profile");
     } else {
       navigate("/settings");
     }
