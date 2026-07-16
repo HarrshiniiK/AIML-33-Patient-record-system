@@ -18,7 +18,7 @@ const NAV_BY_ROLE = {
     { to: "/appointments", label: "Appointments", icon: "calendar" },
     { to: "/records", label: "Medical Records", icon: "file" },
     { to: "/prescriptions", label: "Prescriptions", icon: "file" },
-    { to: "/reports", label: "Reports", icon: "chart" },
+    { to: "/reports", label: "Analytics & Reports", icon: "chart" },
     { to: "/settings", label: "Settings", icon: "gear" },
   ],
   STAFF: [
@@ -98,7 +98,11 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="sidebar-user" onClick={handleProfileClick} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleProfileClick(); }}>
+        <div className="sidebar-user" onClick={handleProfileClick} role="button" tabIndex={0} onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            handleProfileClick();
+          }
+        }}>
           <div className="avatar">{user?.name?.charAt(0) || "?"}</div>
           <div>
             <div className="sidebar-user-name">{user?.name}</div>

@@ -10,6 +10,7 @@ import { getAppointments, getAppointmentsForPatient } from "../services/appointm
 import { getRecordsForPatient } from "../services/recordService";
 import { getRefillRequests } from "../services/prescriptionService";
 import { Link } from "react-router-dom";
+import DoctorPortalPage from "./doctor/DoctorPortalPage";
 
 const patientQuickLinks = [
   { to: "/my-appointments", label: "Book Appointment" },
@@ -207,6 +208,19 @@ function PatientDashboardHome({ user }) {
 function HomePage() {
   const { user } = useAuth();
   const isPatient = user.role === "PATIENT";
+  const isDoctor = user.role === "DOCTOR";
+
+  if (isDoctor) {
+    return (
+      <AppLayout>
+        <Topbar
+          title={`${greeting()}, ${user.name.split(" ")[0]}`}
+          subtitle="Care coordination workspace for doctors and specialist teams"
+        />
+        <DoctorPortalPage />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
