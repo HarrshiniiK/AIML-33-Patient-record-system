@@ -1,18 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../../components/common/AppLayout";
 import Topbar from "../../components/common/Topbar";
 import { useAuth } from "../../context/AuthContext";
 import { updateUser } from "../../services/userService";
 import { db } from "../../data/mockDb";
+import { getPatient, updatePatient } from "../../services/patientService";
+
+const profileDefaults = {
+  age: "35",
+  gender: "Male",
+  phone: "9876543210",
+  address: "12 Maple St, Riverton",
+  emergencyContact: "Mina Osei · 9988776655",
+};
 
 function SettingsPage() {
   const { user, logout } = useAuth();
-  const [name, setName] = useState(user.name);
+  const [name, setName] = useState(user?.name || "");
+  const [dob, setDob] = useState("");
+  const [phone, setPhone] = useState(profileDefaults.phone);
+  const [address, setAddress] = useState(profileDefaults.address);
+  const [emergencyContact, setEmergencyContact] = useState(profileDefaults.emergencyContact);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (!user?.patientId) return;
+
+    getPatient(user.patientId).then((patient) => {
+      if (!patient) return;
+      const fullName = `${patient.firstName || ""} ${patient.lastName || ""}`.trim();
+      setName(fullName || user.name);
+      setDob(patient.dob || "");
+      setPhone(patient.phone || profileDefaults.phone);
+      setAddress(patient.address || profileDefaults.address);
+      setEmergencyContact(patient.emergencyContact || profileDefaults.emergencyContact);
+    });
+  }, [user?.patientId, user?.name]);
 
   async function handleSave(e) {
     e.preventDefault();
-    await updateUser(user.id, { name });
+    if (!user?.patientId) return;
+
+    const fullName = name.trim().split(/\s+/);
+    const firstName = fullName.shift() || "";
+    const lastName = fullName.join(" ") || "";
+
+    await Promise.all([
+      updateUser(user.id, { name }),
+      updatePatient(user.patientId, { firstName, lastName, dob, phone, address, emergencyContact }),
+    ]);
+
     const session = JSON.parse(localStorage.getItem("vitalis_session"));
     localStorage.setItem("vitalis_session", JSON.stringify({ ...session, name }));
     setSaved(true);
@@ -30,12 +67,30 @@ function SettingsPage() {
     <AppLayout>
       <Topbar title="Settings" subtitle="Manage your profile and app data." />
 
-      <div className="card card-pad" style={{ maxWidth: 480, marginBottom: "var(--space-5)" }}>
+      <div className="card card-pad" style={{ maxWidth: 640, marginBottom: "var(--space-5)" }}>
         <h3>Profile</h3>
         <form onSubmit={handleSave}>
           <div className="field">
             <label>Full name</label>
             <input value={name} onChange={(e) => setName(e.target.value)} required />
+          </div>
+          <div className="field-row">
+            <div className="field">
+              <label>Date of birth</label>
+              <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+            </div>
+            <div className="field">
+              <label>Phone</label>
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} />
+            </div>
+          </div>
+          <div className="field">
+            <label>Emergency contact</label>
+            <input value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)} />
+          </div>
+          <div className="field">
+            <label>Address</label>
+            <input value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
           <div className="field">
             <label>Email</label>

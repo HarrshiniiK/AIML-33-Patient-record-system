@@ -10,6 +10,13 @@ import { getAppointments, getAppointmentsForPatient } from "../services/appointm
 import { getRecordsForPatient } from "../services/recordService";
 import { Link } from "react-router-dom";
 
+const patientQuickLinks = [
+  { to: "/my-appointments", label: "Book Appointment" },
+  { to: "/my-records", label: "View Prescriptions" },
+  { to: "/billing", label: "Billing" },
+  { to: "/my-records", label: "Lab Reports" },
+];
+
 function greeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -99,34 +106,65 @@ function PatientDashboardHome({ user }) {
 
   return (
     <>
+      <div className="card card-pad" style={{ marginBottom: "var(--space-4)" }}>
+        <div className="section-header">
+          <h3 className="mb-0">Hello, {user.name.split(" ")[0]}</h3>
+          <span className="badge badge-teal">Patient dashboard</span>
+        </div>
+        <p className="muted mb-0">Manage your appointments, prescriptions, billing, and health updates from one place.</p>
+        <div className="portal-actions" style={{ marginTop: "var(--space-3)" }}>
+          {patientQuickLinks.map((link) => (
+            <Link key={link.to + link.label} to={link.to} className="btn btn-outline btn-sm">
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <div className="stats-grid">
         <StatCard label="Upcoming appointments" value={upcoming.length} accent="teal" />
         <StatCard label="Records on file" value={records.length} accent="navy" />
       </div>
-      <div className="card card-pad" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="section-header">
-          <h3 className="mb-0">Your next appointments</h3>
-          <Link to="/my-appointments" className="text-sm">View all →</Link>
-        </div>
-        {upcoming.length === 0 ? (
-          <p className="muted mb-0">No upcoming appointments scheduled.</p>
-        ) : (
-          <table className="data-table">
-            <thead><tr><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th></tr></thead>
-            <tbody>
-              {upcoming.map((a) => (
-                <tr key={a.id}>
-                  <td>{a.doctorName}</td>
-                  <td className="mono">{a.date}</td>
-                  <td className="mono">{a.time}</td>
-                  <td>{a.reason}</td>
-                </tr>
+
+      <div className="portal-grid">
+        <div className="card card-pad portal-section">
+          <div className="section-header">
+            <h3 className="mb-0">Upcoming appointments</h3>
+            <Link to="/my-appointments" className="text-sm">View all →</Link>
+          </div>
+          {upcoming.length === 0 ? (
+            <p className="muted mb-0">No upcoming appointments scheduled.</p>
+          ) : (
+            <ul className="portal-list">
+              {upcoming.slice(0, 3).map((a) => (
+                <li key={a.id}>
+                  <div className="portal-list-title">{a.reason}</div>
+                  <div className="muted text-sm">{a.doctorName} · {a.date} · {a.time}</div>
+                </li>
               ))}
-            </tbody>
-          </table>
-        )}
+            </ul>
+          )}
+        </div>
+
+        <div className="card card-pad portal-section">
+          <div className="section-header">
+            <h3 className="mb-0">Notifications</h3>
+            <Link to="/notifications" className="text-sm">View all →</Link>
+          </div>
+          <div className="notification-list">
+            <div className="notification-item notification-teal">
+              <strong>Medication refill</strong>
+              <div className="muted text-sm">Your refill request is ready for review.</div>
+            </div>
+            <div className="notification-item notification-amber">
+              <strong>Appointment reminder</strong>
+              <div className="muted text-sm">Your next visit is scheduled for tomorrow morning.</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="card card-pad">
+
+      <div className="card card-pad" style={{ marginTop: "var(--space-4)" }}>
         <div className="section-header">
           <h3 className="mb-0">Recent records</h3>
           <Link to="/my-records" className="text-sm">View all →</Link>

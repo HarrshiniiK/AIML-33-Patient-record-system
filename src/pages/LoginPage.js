@@ -24,8 +24,8 @@ function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      // Navigate to /home — preserves browser history for back button navigation
-      navigate("/home");
+      // Replace the auth history entry so browser back returns to the landing page.
+      navigate("/home", { replace: true });
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {

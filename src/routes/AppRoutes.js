@@ -21,6 +21,10 @@ import UserManagement from "../pages/admin/UserManagement";
 
 import MyAppointments from "../pages/patient/MyAppointments";
 import MyRecords from "../pages/patient/MyRecords";
+import PatientPortalPage from "../pages/patient/PatientPortalPage";
+import BillingPage from "../pages/patient/BillingPage";
+import PrescriptionsPage from "../pages/patient/PrescriptionsPage";
+import NotificationsPage from "../pages/patient/NotificationsPage";
 
 const STAFF_ROLES = ["ADMIN", "DOCTOR", "STAFF"];
 
@@ -58,8 +62,12 @@ function AppRoutes() {
       <Route path="/admin/users" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UserManagement /></ProtectedRoute>} />
 
       {/* Patient-only self-service views */}
+      <Route path="/patient-portal" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PatientPortalPage /></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyAppointments /></ProtectedRoute>} />
       <Route path="/my-records" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyRecords /></ProtectedRoute>} />
+      <Route path="/prescriptions" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PrescriptionsPage /></ProtectedRoute>} />
+      <Route path="/billing" element={<ProtectedRoute allowedRoles={["PATIENT"]}><BillingPage /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute allowedRoles={["PATIENT"]}><NotificationsPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
