@@ -21,7 +21,7 @@ import UserManagement from "../pages/admin/UserManagement";
 
 import MyAppointments from "../pages/patient/MyAppointments";
 import MyRecords from "../pages/patient/MyRecords";
-import PatientPortalPage from "../pages/patient/PatientPortalPage";
+import MyProfilePage from "../pages/patient/MyProfilePage";
 import BillingPage from "../pages/patient/BillingPage";
 import PrescriptionsPage from "../pages/patient/PrescriptionsPage";
 import NotificationsPage from "../pages/patient/NotificationsPage";
@@ -44,7 +44,7 @@ function AppRoutes() {
       <Route path="/patients" element={<ProtectedRoute allowedRoles={STAFF_ROLES}><PatientList /></ProtectedRoute>} />
       <Route path="/patients/add" element={<ProtectedRoute allowedRoles={["ADMIN", "STAFF"]}><PatientForm /></ProtectedRoute>} />
       <Route path="/patients/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "STAFF"]}><PatientForm /></ProtectedRoute>} />
-      <Route path="/patients/:id" element={<ProtectedRoute allowedRoles={STAFF_ROLES}><PatientDetails /></ProtectedRoute>} />
+      <Route path="/patients/:id" element={<ProtectedRoute allowedRoles={[...STAFF_ROLES, "PATIENT"]}><PatientDetails /></ProtectedRoute>} />
 
       {/* Doctors — admin only */}
       <Route path="/doctors" element={<ProtectedRoute allowedRoles={["ADMIN"]}><DoctorList /></ProtectedRoute>} />
@@ -62,10 +62,10 @@ function AppRoutes() {
       <Route path="/admin/users" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UserManagement /></ProtectedRoute>} />
 
       {/* Patient-only self-service views */}
-      <Route path="/patient-portal" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PatientPortalPage /></ProtectedRoute>} />
+      <Route path="/my-profile" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyProfilePage /></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyAppointments /></ProtectedRoute>} />
       <Route path="/my-records" element={<ProtectedRoute allowedRoles={["PATIENT"]}><MyRecords /></ProtectedRoute>} />
-      <Route path="/prescriptions" element={<ProtectedRoute allowedRoles={["PATIENT"]}><PrescriptionsPage /></ProtectedRoute>} />
+      <Route path="/prescriptions" element={<ProtectedRoute allowedRoles={["PATIENT", "DOCTOR", "STAFF", "ADMIN"]}><PrescriptionsPage /></ProtectedRoute>} />
       <Route path="/billing" element={<ProtectedRoute allowedRoles={["PATIENT"]}><BillingPage /></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute allowedRoles={["PATIENT"]}><NotificationsPage /></ProtectedRoute>} />
 

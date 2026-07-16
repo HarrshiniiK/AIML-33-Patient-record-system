@@ -15,7 +15,13 @@ export async function register({ name, email, password }) {
   }
   const patient = await db.create(
     "patients",
-    { firstName: name.split(" ")[0], lastName: name.split(" ").slice(1).join(" ") || "—", status: "Outpatient" },
+    {
+      firstName: name.split(" ")[0],
+      lastName: name.split(" ").slice(1).join(" ") || "—",
+      status: "Outpatient",
+      bloodGroup: "O+",
+      assignedDoctor: "Dr. Marcus Chen",
+    },
     "p"
   );
   const newUser = await db.create("users", { name, email, password, role: "PATIENT", patientId: patient.id }, "u");

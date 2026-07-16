@@ -12,13 +12,13 @@ function Topbar({ title, subtitle, actions }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isPatient = user?.role === "PATIENT" || user?.role === "patient";
-  const [open, setOpen] = useState(false);
-  const popupRef = useRef(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const topbarRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        setOpen(false);
+      if (topbarRef.current && !topbarRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
       }
     }
 
@@ -27,9 +27,11 @@ function Topbar({ title, subtitle, actions }) {
   }, []);
 
   function handleSelect(path) {
-    setOpen(false);
+    setNotificationsOpen(false);
     navigate(path);
   }
+
+  const profileName = user?.name || "Profile";
 
   return (
     <header className="topbar">
@@ -37,12 +39,12 @@ function Topbar({ title, subtitle, actions }) {
         <h1 className="topbar-title">{title}</h1>
         {subtitle && <p className="topbar-subtitle muted text-sm mb-0">{subtitle}</p>}
       </div>
-      <div className="flex-gap" style={{ alignItems: "center" }}>
+      <div ref={topbarRef} className="flex-gap" style={{ alignItems: "center" }}>
         {isPatient && (
-          <div ref={popupRef} style={{ position: "relative" }}>
+          <div style={{ position: "relative" }}>
             <button
               type="button"
-              onClick={() => setOpen((value) => !value)}
+              onClick={() => setNotificationsOpen((value) => !value)}
               className="btn btn-outline"
               aria-label="Open notifications"
               style={{ position: "relative", padding: "0.6rem 0.8rem", borderRadius: "999px" }}
@@ -65,7 +67,7 @@ function Topbar({ title, subtitle, actions }) {
               </span>
             </button>
 
-            {open && (
+            {notificationsOpen && (
               <div
                 style={{
                   position: "absolute",
@@ -103,6 +105,7 @@ function Topbar({ title, subtitle, actions }) {
             )}
           </div>
         )}
+
         {actions && <div className="flex-gap">{actions}</div>}
       </div>
     </header>

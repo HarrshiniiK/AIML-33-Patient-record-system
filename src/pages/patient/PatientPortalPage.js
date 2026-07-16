@@ -24,7 +24,7 @@ function PatientPortalPage() {
   const [appointments, setAppointments] = useState(null);
   const [records, setRecords] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
-  const [profileForm, setProfileForm] = useState({ name: "", dob: "", phone: "", address: "", emergencyContact: "" });
+  const [profileForm, setProfileForm] = useState({ name: "", dob: "", phone: "", address: "", bloodGroup: "", emergencyContact: "", assignedDoctor: "" });
   const [profileSaved, setProfileSaved] = useState(false);
 
   useEffect(() => {
@@ -46,7 +46,9 @@ function PatientPortalPage() {
         dob: patient?.dob || "",
         phone: patient?.phone || "",
         address: patient?.address || "",
+        bloodGroup: patient?.bloodGroup || "O+",
         emergencyContact: patient?.emergencyContact || "",
+        assignedDoctor: patient?.assignedDoctor || "Dr. Marcus Chen",
       });
       setAppointments(allAppointments || []);
       setRecords(allRecords || []);
@@ -82,7 +84,9 @@ function PatientPortalPage() {
       dob: profileForm.dob,
       phone: profileForm.phone,
       address: profileForm.address,
+      bloodGroup: profileForm.bloodGroup || "O+",
       emergencyContact: profileForm.emergencyContact,
+      assignedDoctor: profileForm.assignedDoctor || "Dr. Marcus Chen",
     });
 
     const refreshed = await getPatient(user.patientId);
@@ -92,7 +96,9 @@ function PatientPortalPage() {
       dob: refreshed?.dob || "",
       phone: refreshed?.phone || "",
       address: refreshed?.address || "",
+      bloodGroup: refreshed?.bloodGroup || "O+",
       emergencyContact: refreshed?.emergencyContact || "",
+      assignedDoctor: refreshed?.assignedDoctor || "Dr. Marcus Chen",
     });
     setEditingProfile(false);
     setProfileSaved(true);
@@ -136,8 +142,16 @@ function PatientPortalPage() {
                 <input name="address" value={profileForm.address} onChange={handleProfileFieldChange} />
               </div>
               <div className="field">
+                <label>Blood group</label>
+                <input name="bloodGroup" value={profileForm.bloodGroup} onChange={handleProfileFieldChange} placeholder="e.g. O+" />
+              </div>
+              <div className="field">
                 <label>Emergency contact</label>
                 <input name="emergencyContact" value={profileForm.emergencyContact} onChange={handleProfileFieldChange} />
+              </div>
+              <div className="field">
+                <label>Assigned doctor</label>
+                <input name="assignedDoctor" value={profileForm.assignedDoctor} onChange={handleProfileFieldChange} />
               </div>
               <button type="submit" className="btn btn-primary btn-sm">Save changes</button>
             </form>
@@ -164,8 +178,16 @@ function PatientPortalPage() {
                 <dd>{profile?.address || "—"}</dd>
               </div>
               <div>
+                <dt>Blood group</dt>
+                <dd>{profile?.bloodGroup || "O+"}</dd>
+              </div>
+              <div>
                 <dt>Emergency contact</dt>
                 <dd>{profile?.emergencyContact || "—"}</dd>
+              </div>
+              <div>
+                <dt>Assigned doctor</dt>
+                <dd>{profile?.assignedDoctor || "Dr. Marcus Chen"}</dd>
               </div>
             </div>
           )}
