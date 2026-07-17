@@ -1,9 +1,6 @@
-import { db } from "../data/mockDb";
+import api from "./api";
 
-export async function getUsers() {
-  const users = await db.list("users");
-  return users.map(({ password, ...rest }) => rest);
-}
-export const updateUser = (id, data) => db.update("users", id, data);
-export const deleteUser = (id) => db.remove("users", id);
-export const createUser = (data) => db.create("users", data, "u");
+export const getUsers = () => api.get("/users").then((res) => res.data);
+export const createUser = (data) => api.post("/users", data).then((res) => res.data);
+export const updateUser = (id, data) => api.put(`/users/${id}`, data).then((res) => res.data);
+export const deleteUser = (id) => api.delete(`/users/${id}`).then((res) => res.data);

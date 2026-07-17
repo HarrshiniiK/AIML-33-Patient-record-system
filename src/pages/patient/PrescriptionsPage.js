@@ -17,12 +17,20 @@ function PrescriptionsPage() {
   const [reviewNotes, setReviewNotes] = useState("");
 
   useEffect(() => {
-    if (!user?.patientId) return;
-    Promise.all([getPrescriptions(user.patientId), getRefillRequests()]).then(([items, refillRequests]) => {
-      setPrescriptions(items);
-      setRequests(refillRequests.filter((request) => request.patientId === user.patientId));
-    });
-  }, [user?.patientId, submitted]);
+    if (canReview) {
+      getRefillRequests().then((refillRequests) => {
+        setRequests(refillRequests);
+      }).catch((err) => console.error("Error fetching refill requests:", err));
+    } else if (user?.patientId) {
+      Promise.all([
+        getPrescriptions(user.patientId),
+        getRefillRequests(user.patientId)
+      ]).then(([items, refillRequests]) => {
+        setPrescriptions(items);
+        setRequests(refillRequests);
+      }).catch((err) => console.error("Error fetching patient data:", err));
+    }
+  }, [user, submitted, canReview]);
 
   const canReview = user?.role === "DOCTOR" || user?.role === "STAFF";
 
