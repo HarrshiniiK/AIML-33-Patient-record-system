@@ -18,6 +18,7 @@ import MedicalRecords from "../pages/records/MedicalRecords";
 import ReportsPage from "../pages/reports/ReportsPage";
 import SettingsPage from "../pages/settings/SettingsPage";
 import UserManagement from "../pages/admin/UserManagement";
+import StaffList from "../pages/admin/StaffList";
 
 import MyAppointments from "../pages/patient/MyAppointments";
 import MyRecords from "../pages/patient/MyRecords";
@@ -42,9 +43,12 @@ function AppRoutes() {
 
       {/* Patients module — admin/doctor/staff can view; only admin/staff manage demographics */}
       <Route path="/patients" element={<ProtectedRoute allowedRoles={STAFF_ROLES}><PatientList /></ProtectedRoute>} />
-      <Route path="/patients/add" element={<ProtectedRoute allowedRoles={["ADMIN", "STAFF"]}><PatientForm /></ProtectedRoute>} />
+      <Route path="/patients/add" element={<ProtectedRoute allowedRoles={["STAFF"]}><PatientForm /></ProtectedRoute>} />
       <Route path="/patients/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "STAFF"]}><PatientForm /></ProtectedRoute>} />
       <Route path="/patients/:id" element={<ProtectedRoute allowedRoles={[...STAFF_ROLES, "PATIENT"]}><PatientDetails /></ProtectedRoute>} />
+
+      {/* Staff — admin only */}
+      <Route path="/admin/staff" element={<ProtectedRoute allowedRoles={["ADMIN"]}><StaffList /></ProtectedRoute>} />
 
       {/* Doctors — admin only */}
       <Route path="/doctors" element={<ProtectedRoute allowedRoles={["ADMIN"]}><DoctorList /></ProtectedRoute>} />

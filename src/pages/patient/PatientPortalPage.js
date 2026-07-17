@@ -17,7 +17,7 @@ const billingItems = [
 
 
 function PatientPortalPage() {
-  const { user } = useAuth();
+  const { user, updateUserSession } = useAuth();
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState(null);
   const [records, setRecords] = useState(null);
@@ -92,6 +92,8 @@ function PatientPortalPage() {
 
     const refreshed = await getPatient(user.patientId);
     setProfile(refreshed);
+    const newFullName = refreshed ? `${refreshed.firstName || ""} ${refreshed.lastName || ""}`.trim() : "";
+    updateUserSession({ name: newFullName });
     setProfileForm({
       name: refreshed ? `${refreshed.firstName || ""} ${refreshed.lastName || ""}`.trim() : "",
       dob: refreshed?.dob || "",

@@ -1,31 +1,23 @@
-import { db } from "../data/mockDb";
+import api from "./api";
 
 export async function getNotifications(userId, role) {
-  const allNotifications = await db.list("notifications");
-  
-  return allNotifications.filter(notification => {
-    // If targeted specifically at a user
-    if (notification.targetUserId && notification.targetUserId === userId) {
-      return true;
-    }
-    // If targeted at a role (like STAFF or DOCTOR)
-    if (notification.targetRoles && notification.targetRoles.includes(role)) {
-      return true;
-    }
-    return false;
-  }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return api.get("/notifications", { params: { recipientId: userId, recipientRole: role } }).then((res) => res.data);
 }
 
 export async function createNotification(data) {
-  // data should contain: targetUserId OR targetRoles, title, message, path (optional), tone (optional)
-  const notification = {
-    ...data,
-    read: false,
-    createdAt: new Date().toISOString()
+  const recipientRole = data.recipientRole || (data.targetRoles && data.targetRoles[0]) || null;
+  const recipientId = data.recipientId || data.targetUserId || null;
+  
+  const payload = {
+    recipientRole,
+    recipientId,
+    title: data.title,
+    message: data.message,
+    isRead: false
   };
-  return db.create("notifications", notification, "notif");
+  return api.post("/notifications", payload).then((res) => res.data);
 }
 
 export async function markAsRead(id) {
-  return db.update("notifications", id, { read: true });
+  return api.put(`/notifications/${id}`).then((res) => res.data);
 }

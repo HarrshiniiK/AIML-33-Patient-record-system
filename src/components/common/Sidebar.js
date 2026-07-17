@@ -7,6 +7,7 @@ const NAV_BY_ROLE = {
     { to: "/home", label: "Dashboard", icon: "grid" },
     { to: "/patients", label: "Patients", icon: "user" },
     { to: "/doctors", label: "Doctors", icon: "stethoscope" },
+    { to: "/admin/staff", label: "Staff", icon: "user" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
     { to: "/reports", label: "Reports", icon: "chart" },
     { to: "/admin/users", label: "User Management", icon: "shield" },

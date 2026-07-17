@@ -33,8 +33,16 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(SESSION_KEY);
   }
 
+  function updateUserSession(updatedFields) {
+    if (user) {
+      const updated = { ...user, ...updatedFields };
+      setUser(updated);
+      localStorage.setItem(SESSION_KEY, JSON.stringify(updated));
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, initializing }}>
+    <AuthContext.Provider value={{ user, login, register, logout, initializing, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );

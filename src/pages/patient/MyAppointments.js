@@ -87,6 +87,7 @@ function MyAppointments() {
       });
       setForm(emptyForm);
       setMessage("Appointment booked successfully.");
+      window.alert("Your appointment has been booked successfully and is waiting for the doctor's response.");
       loadData();
     } catch (err) {
       setMessage(err.message || "Unable to book appointment.");

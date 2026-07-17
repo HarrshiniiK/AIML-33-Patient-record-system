@@ -36,7 +36,7 @@ function StaffDashboard({ user }) {
       const patients = isDoctor ? allPatients.filter((p) => p.assignedDoctor === user.name) : allPatients;
       const appointments = isDoctor ? allAppointments.filter((a) => a.doctorName === user.name) : allAppointments;
       setData({ patients, doctors, appointments });
-      setRefillRequests(requests.filter((request) => request.status === "Pending"));
+      setRefillRequests(requests.filter((request) => request.status?.toUpperCase() === "PENDING"));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

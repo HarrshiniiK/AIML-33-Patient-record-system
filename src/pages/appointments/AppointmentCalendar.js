@@ -76,8 +76,12 @@ function AppointmentCalendar() {
         patientName: patient ? `${patient.firstName} ${patient.lastName}` : form.patientName,
         doctorName: doctor ? doctor.name : form.doctorName,
       };
-      if (editing) await updateAppointment(editing.id, payload);
-      else await createAppointment(payload);
+      if (editing) {
+        await updateAppointment(editing.id, payload);
+        window.alert("Appointment status updated successfully. Notifications have been sent.");
+      } else {
+        await createAppointment(payload);
+      }
       setModalOpen(false);
       load();
     } finally {
@@ -232,8 +236,15 @@ function AppointmentCalendar() {
           <div className="field">
             <label>Status</label>
             <select name="status" value={form.status} onChange={handleChange}>
-              <option>Pending</option><option>Confirmed</option><option>Cancelled</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed (Approved)</option>
+              <option value="Cancelled">Cancelled (Rejected)</option>
+              <option value="Rescheduled">Rescheduled</option>
             </select>
+          </div>
+          <div className="field">
+            <label>Doctor's Remarks</label>
+            <textarea name="remarks" value={form.remarks || ""} onChange={handleChange} rows={2} placeholder="Add remarks, comments or reschedule instructions" />
           </div>
           <div className="flex-gap" style={{ marginTop: "var(--space-4)" }}>
             <button type="submit" className="btn btn-primary" disabled={saving}>
