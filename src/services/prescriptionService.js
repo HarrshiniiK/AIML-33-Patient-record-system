@@ -1,19 +1,17 @@
-import { db } from "../data/mockDb";
+import api from "./api";
 
 export async function getPrescriptions(patientId) {
-  const prescriptions = await db.list("prescriptions");
-  if (!patientId) return prescriptions;
-  return prescriptions.filter((item) => item.patientId === patientId);
+  return api.get("/prescriptions", { params: { patientId } }).then((res) => res.data);
 }
 
 export async function createRefillRequest(request) {
-  return db.create("refillRequests", request, "rr");
+  return api.post("/prescriptions/refills", request).then((res) => res.data);
 }
 
-export async function getRefillRequests() {
-  return db.list("refillRequests");
+export async function getRefillRequests(patientId) {
+  return api.get("/prescriptions/refills", { params: { patientId } }).then((res) => res.data);
 }
 
 export async function updateRefillRequest(id, updates) {
-  return db.update("refillRequests", id, updates);
+  return api.put(`/prescriptions/refills/${id}`, updates).then((res) => res.data);
 }

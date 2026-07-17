@@ -1,12 +1,8 @@
-import { db } from "../data/mockDb";
+import api from "./api";
 
-export const getAppointments = () => db.list("appointments");
-export const getAppointment = (id) => db.get("appointments", id);
-export const createAppointment = (data) => db.create("appointments", { status: "Pending", ...data }, "a");
-export const updateAppointment = (id, data) => db.update("appointments", id, data);
-export const deleteAppointment = (id) => db.remove("appointments", id);
-
-export async function getAppointmentsForPatient(patientId) {
-  const all = await db.list("appointments");
-  return all.filter((a) => a.patientId === patientId);
-}
+export const getAppointments = () => api.get("/appointments").then((res) => res.data);
+export const getAppointment = (id) => api.get(`/appointments/${id}`).then((res) => res.data);
+export const createAppointment = (data) => api.post("/appointments", data).then((res) => res.data);
+export const updateAppointment = (id, data) => api.put(`/appointments/${id}`, data).then((res) => res.data);
+export const deleteAppointment = (id) => api.delete(`/appointments/${id}`).then((res) => res.data);
+export const getAppointmentsForPatient = (patientId) => api.get(`/appointments/patient/${patientId}`).then((res) => res.data);
