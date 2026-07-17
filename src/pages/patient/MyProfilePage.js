@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getPatient, updatePatient } from "../../services/patientService";
 
 function MyProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUserSession } = useAuth();
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
   const [form, setForm] = useState({
@@ -71,6 +71,8 @@ function MyProfilePage() {
       });
       const refreshed = await getPatient(user.patientId);
       setPatient(refreshed);
+      const newFullName = `${refreshed.firstName || ""} ${refreshed.lastName || ""}`.trim();
+      updateUserSession({ name: newFullName });
       setMessage("Profile updated successfully.");
       setIsEditing(false);
     } catch (error) {

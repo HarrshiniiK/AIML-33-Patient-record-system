@@ -48,7 +48,7 @@ function PatientList() {
       <Topbar
         title="Patients"
         subtitle={isDoctor ? `${patients?.length ?? "…"} patients assigned to you` : `${patients?.length ?? "…"} records on file`}
-        actions={canEdit && <Link to="/patients/add" className="btn btn-accent">+ Add patient</Link>}
+        actions={user.role !== "ADMIN" && canEdit && <Link to="/patients/add" className="btn btn-accent">+ Add patient</Link>}
       />
 
       <form onSubmit={handleSearch} className="flex-gap" style={{ marginBottom: "var(--space-5)" }}>

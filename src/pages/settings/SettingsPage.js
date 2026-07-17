@@ -15,7 +15,7 @@ const profileDefaults = {
 };
 
 function SettingsPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUserSession } = useAuth();
   const [name, setName] = useState(user?.name || "");
   const [dob, setDob] = useState("");
   const [phone, setPhone] = useState(profileDefaults.phone);
@@ -52,6 +52,7 @@ function SettingsPage() {
 
     const session = JSON.parse(localStorage.getItem("vitalis_session"));
     localStorage.setItem("vitalis_session", JSON.stringify({ ...session, name }));
+    updateUserSession({ name });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
